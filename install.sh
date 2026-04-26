@@ -162,11 +162,19 @@ else
 
     if [ -n "$VERSION_PIN" ]; then
         RELEASE_TAG="v$VERSION_PIN"
-    elif command -v gh >/dev/null 2>&1; then
-        RELEASE_TAG=$(gh release view --repo "$REPO" --json tagName -q .tagName 2>/dev/null || echo "")
     else
-        RELEASE_TAG=$(curl -fsSL "https://api.github.com/repos/$REPO/releases/latest" 2>/dev/null \
-            | extract_json_string_field "tag_name" || echo "")
+        # Try gh first (handles private dist repos when the user has run
+        # `gh auth login`). Fall through to anonymous curl if gh is missing
+        # OR is installed-but-unauthenticated (the common CI case — gh ships
+        # on GitHub-hosted runners but no token is set by default).
+        RELEASE_TAG=""
+        if command -v gh >/dev/null 2>&1; then
+            RELEASE_TAG=$(gh release view --repo "$REPO" --json tagName -q .tagName 2>/dev/null || echo "")
+        fi
+        if [ -z "$RELEASE_TAG" ]; then
+            RELEASE_TAG=$(curl -fsSL "https://api.github.com/repos/$REPO/releases/latest" 2>/dev/null \
+                | extract_json_string_field "tag_name" || echo "")
+        fi
     fi
 
     if [ -z "$RELEASE_TAG" ]; then
@@ -193,10 +201,14 @@ else
     WHEEL_PATTERN="catchai-*-${ABI_TAG}-*${WHEEL_MACHINE}*.whl"
     echo "  Looking for: $WHEEL_PATTERN"
 
+    # Try gh first; fall back to anonymous curl on miss (same reason as the
+    # release-tag lookup above — gh-but-no-auth is the default CI runner state).
     if command -v gh >/dev/null 2>&1; then
         gh release download "$RELEASE_TAG" --repo "$REPO" \
-            --pattern "$WHEEL_PATTERN" --dir "$WORK_DIR" 2>/dev/null
-    else
+            --pattern "$WHEEL_PATTERN" --dir "$WORK_DIR" 2>/dev/null || true
+    fi
+
+    if [ -z "$(find "$WORK_DIR" -name '*.whl' -print -quit)" ]; then
         ASSETS_URL="https://api.github.com/repos/$REPO/releases/tags/$RELEASE_TAG"
         WHEEL_URL=$(curl -fsSL "$ASSETS_URL" 2>/dev/null \
             | grep '"browser_download_url"' \
