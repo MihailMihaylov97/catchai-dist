@@ -13,8 +13,8 @@
 #
 # Environment overrides:
 #   CATCHAI_DIST_REPO    GitHub <owner>/<repo> hosting wheel releases.
-#                        Default: catchai/catchai-dist (PLACEHOLDER until that
-#                        repo exists — see CATCHAI_Repos.md §3).
+#                        Default: MihailMihaylov97/catchai-dist (the public
+#                        wheels repo; see CATCHAI_Repos.md §3).
 #   CATCHAI_VERSION      Pin to a specific version (default: latest release).
 #   CATCHAI_WHEEL_URL    Direct URL to a wheel — bypasses GitHub release lookup.
 #                        Useful for local testing: CATCHAI_WHEEL_URL=file:///...
@@ -22,30 +22,10 @@
 #
 set -e
 
-REPO="${CATCHAI_DIST_REPO:-catchai/catchai-dist}"
+REPO="${CATCHAI_DIST_REPO:-MihailMihaylov97/catchai-dist}"
 VERSION_PIN="${CATCHAI_VERSION:-}"
 WHEEL_URL_OVERRIDE="${CATCHAI_WHEEL_URL:-}"
 CATCHAI_HOME="${CATCHAI_HOME:-$HOME/.catchai}"
-
-# Fast-fail: until catchai-dist actually exists, the GitHub API call would
-# 404 with a confusing error. Detect the placeholder and bail with a clear
-# message that points the user at the override knobs.
-if [ "$REPO" = "catchai/catchai-dist" ] && [ -z "$WHEEL_URL_OVERRIDE" ]; then
-    cat >&2 <<'EOF'
-ERROR: catchai-dist repo not yet configured.
-
-This installer needs either:
-
-  CATCHAI_DIST_REPO=<owner>/<repo>   if you've already published wheels somewhere
-  CATCHAI_WHEEL_URL=<url-or-file://> for a one-off install from a specific wheel
-
-For local testing against a wheel built via dist/build_wheel.sh:
-
-  CATCHAI_WHEEL_URL=file:///path/to/your.whl bash dist/install.sh
-
-EOF
-    exit 1
-fi
 
 COMPLETION_MARKER="# catchai shell completion (managed by catchai installer)"
 
