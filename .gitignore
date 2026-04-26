@@ -1,0 +1,9 @@
+# Wheels themselves never live in the repo — they're attached to
+# Releases. If one shows up here, something went wrong.
+*.whl
+*.tar.gz
+
+# Local
+.DS_Store
+.vscode/
+.idea/
