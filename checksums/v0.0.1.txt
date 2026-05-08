@@ -1,3 +1,3 @@
-f3d0550104313a2d52d2ffd6c686cbfb45cf41d2891b1240ac7d93d129eea446  catchai-0.0.1-cp311-abi3-linux_aarch64.whl
-76f0d154c56b99cdc0f341306f792ae88b4b5163c781cd909a1230ee1e40a637  catchai-0.0.1-cp311-abi3-linux_x86_64.whl
-63168fa12933b00804f70bf5d6025caadcb159844de4d5068c2c11fb9d1cf4d7  catchai-0.0.1-cp311-abi3-macosx_10_9_universal2.whl
+02dd5925684e69111183c25dbf7617d7f433b87330c97457a7302b21db03e3b2  catchai-0.0.1-cp311-abi3-linux_aarch64.whl
+20f91ce91fd7f3e5fec0b54ceab99d8bcf7d300af5dea17d6b09ba413369ec7f  catchai-0.0.1-cp311-abi3-linux_x86_64.whl
+df952bc632e798c91f53dd2136424072f9c26994080d75aefebe51f1da59bec9  catchai-0.0.1-cp311-abi3-macosx_10_9_universal2.whl
